@@ -8,9 +8,9 @@ public class Pergunta{
 
     private Integer id;
     private String pergunta;
-    private boolean resposta;
+    private String resposta;
 
-    public Pergunta(int id,String pergunta,boolean resposta){
+    public Pergunta(int id,String pergunta,String resposta){
         this.setId(id);
         this.setPergunta(pergunta);
         this.setResposta(resposta);
@@ -32,11 +32,11 @@ public class Pergunta{
         this.pergunta = pergunta;
     }
 
-    public boolean isResposta() {
+    public String getResposta() {
         return resposta;
     }
 
-    public void setResposta(boolean resposta) {
+    public void setResposta(String resposta) {
         this.resposta = resposta;
     }
 }

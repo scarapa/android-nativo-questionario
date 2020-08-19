@@ -21,7 +21,6 @@
             android:id="@+id/editPerguntaNumero"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="" />
@@ -58,7 +57,13 @@
                         android:text="Falso"
                         android:onClick="responder"/>
                 </RadioGroup>
-
+                <EditText
+                    android:id="@+id/editRespostaCerta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="" />
             </LinearLayout>
 
         </LinearLayout>
