@@ -6,8 +6,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import Database.Database;
 import android.content.Context;
+
+import Database.DataBaseStructureDBHandler;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -15,7 +16,7 @@ public class SplashActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Database database = new Database( getBaseContext() , 1 );
+        DataBaseStructureDBHandler db = new DataBaseStructureDBHandler(SplashActivity.this);
 
         setContentView(R.layout.activity_splash);
         Handler handler = new Handler();
