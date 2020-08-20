@@ -1,22 +1,21 @@
 package br.com.questionario;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+
+import Database.Database;
 import Model.Pergunta;
 
 import static java.lang.Integer.parseInt;
@@ -31,40 +30,87 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         int perguntaNumero = 0;
         int editPerguntaNumeroValor;
-        List<ArrayList> listaResposta ;
+
+        Database database = new Database(this,1);
+
+        List<Pergunta> lista = buscarPerguntas();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EditText editPerguntaNumero = (EditText) findViewById(R.id.editPerguntaNumero);
-
-        if( (editPerguntaNumero.getText() == null) || (editPerguntaNumero.getText().toString().trim().isEmpty()) ){
-            editPerguntaNumeroValor = 0;
-        }else{
-            editPerguntaNumeroValor = Integer.parseInt( editPerguntaNumero.getText().toString() );
-        }
-        editPerguntaNumero.setText( Integer.toString( editPerguntaNumeroValor) );
-        montarTela( editPerguntaNumeroValor );
+        EditText editArrayTamanho = (EditText) findViewById(R.id.editArrayTamanho);
+        editArrayTamanho.setText( String.valueOf( lista.size() ) );
+        editPerguntaNumero.setText("0");
+        montarTela( 0 );
     }
 
     public void montarTela(int perguntaNumero){
         List<Pergunta> lista = buscarPerguntas();
+        String bancoId = lista.get(perguntaNumero).getId().toString();
         String bancoPergunta = lista.get(perguntaNumero).getPergunta();
         String bancoResposta = lista.get(perguntaNumero).getResposta();
 
+        EditText editPerguntaNumero = (EditText) findViewById(R.id.editPerguntaNumero);
         EditText editPerguntaPergunta = (EditText) findViewById(R.id.pergunta);
         EditText editPerguntaResposta = (EditText) findViewById(R.id.editRespostaCerta);
 
+        editPerguntaNumero.setText( String.valueOf( perguntaNumero ) );
         editPerguntaPergunta.setText(bancoPergunta.toString());
         editPerguntaResposta.setText(bancoResposta.toString());
 
     }
 
     public void responder(View view){
+        //TAMANHO MAXIMO DO ARRAY
+        EditText editArrayTamanho = (EditText) findViewById(R.id.editArrayTamanho);
+        int perguntasTotal = Integer.parseInt( editArrayTamanho.getText().toString() );
+
         radioGroup = (RadioGroup) findViewById(R.id.radioResposta);
         int selectedId = radioGroup.getCheckedRadioButtonId();
         radioButton = (RadioButton) findViewById(selectedId);
 
+        Boolean correcao = verificarQuestao( radioButton.getText().toString().toLowerCase() );
 
-        //Toast.makeText(MainActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+        String mensagem = (correcao)?"Resposta Corretissima !!! ":"ERROU !!!";
+        Toast.makeText(MainActivity.this, mensagem, Toast.LENGTH_SHORT).show();
+
+        //GRAVANDO RESPOSTA NA MEMORIA
+        gravarResposta(correcao);
+
+        //PEGAR A QUESTAO QUE ESTA NO ID
+        EditText editPerguntaNumero = (EditText) findViewById(R.id.editPerguntaNumero);
+
+        // INCREMENTAR
+        int perguntaNumero = Integer.parseInt( editPerguntaNumero.getText().toString() ) + 1;
+
+        //montar tela com a proxima questao
+        if( perguntaNumero == perguntasTotal ){
+            Intent intent = new Intent(this,RespostaActivity.class);
+            startActivity(intent);
+        }else{
+            montarTela(perguntaNumero);
+        }
+
+    }
+
+    public void gravarResposta(boolean correcao){
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        EditText editPerguntaNumero = (EditText) findViewById(R.id.editPerguntaNumero);
+        String pergunta = "pergunta"+editPerguntaNumero.toString();
+        editor.putString( pergunta , String.valueOf(correcao) );
+        //editor.putString("pergunta" , "respondido" );
+        editor.commit();
+
+    }
+
+    public boolean verificarQuestao(String resposta){
+        EditText editPerguntaResposta = (EditText) findViewById(R.id.editRespostaCerta);
+        if(resposta.equals(editPerguntaResposta.getText().toString().toLowerCase())){
+            return true;
+        }
+        return false;
     }
 
 
