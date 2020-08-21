@@ -7,47 +7,35 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.questionario.Config;
 
-public class PerguntaDBHandler extends SQLiteOpenHelper {
+public class RespostaDBHandler extends SQLiteOpenHelper{
 
-    public PerguntaDBHandler(Context context) {
+    public RespostaDBHandler(Context context) {
         super(context, Config.getDatabaseName(), null, Config.getDatabaseVersion());
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-
-    }
-
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {}
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {}
 
-    }
-
-    public long addHandler(Pergunta pergunta){
+    public long addHandler(Resposta resposta){
         long result = 0;
 
         try{
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//            String date = sdf.format(new Date());
-
             ContentValues values = new ContentValues();
-            values.put(Pergunta.getColumnPergunta(), pergunta.getPergunta());
-            values.put(Pergunta.getColumnResposta(), pergunta.getResposta());
-
+            values.put("id", resposta.getId());
+            values.put("resposta", resposta.getResposta());
             SQLiteDatabase db = this.getWritableDatabase();
-            long dados_id = db.insert(Pergunta.getTableName(), null, values);
+            long dados_id = db.insert(" respostas ", null, values);
 
             if (dados_id != -1) {
                 result = dados_id;
-                Log.i("DATABASE", "Pergunta adicionada: "+dados_id);
+                Log.i("DATABASE", "RESPOSTA adicionada: "+dados_id);
             }
             db.close();
 
@@ -61,7 +49,7 @@ public class PerguntaDBHandler extends SQLiteOpenHelper {
 
     public List<Pergunta> findListHandler(){
         List<Pergunta> dadosList = new ArrayList<>();
-        String query = "SELECT * FROM " + Pergunta.getTableName();
+        String query = " SELECT * FROM respostas ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -134,4 +122,14 @@ public class PerguntaDBHandler extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean limparBanco(){
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.delete(" perguntas ", null, null);
+            return true;
+        }catch (Exception e){
+
+        }
+        return false;
+    }
 }

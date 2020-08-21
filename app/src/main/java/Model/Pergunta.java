@@ -12,7 +12,7 @@ public class Pergunta{
 
     //Colunas do banco
     private static final String TABLE_NAME = "perguntas";
-    private static final String COLUMN_ID = "_id";
+    private static final String COLUMN_ID = "id";
     private static final String COLUMN_PERGUNTA = "pergunta";
     private static final String COLUMN_RESPOSTA = "resposta";
 
