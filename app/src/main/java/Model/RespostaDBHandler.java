@@ -42,9 +42,7 @@ public class RespostaDBHandler extends SQLiteOpenHelper{
         }catch(SQLiteException e){
             result = 0;
         }
-
         return result;
-
     }
 
     public List<Pergunta> findListHandler(){
@@ -53,8 +51,6 @@ public class RespostaDBHandler extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
-
-
         while(cursor.moveToNext()){
             Pergunta pergunta = new Pergunta();
             pergunta.setId(cursor.getInt(0));
@@ -132,4 +128,24 @@ public class RespostaDBHandler extends SQLiteOpenHelper{
         }
         return false;
     }
+
+    public List<String> buscarResultado(){
+        String query = " SELECT COUNT(resposta) questoes , SUM(resposta) acertos , printf(\"%.2f\", ( printf(\"%.2f\",100*SUM(resposta)) ) / printf(\"%.2f\",COUNT(resposta) ) ) nota FROM respostas" ;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        List<String> lista = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            int questoes = cursor.getInt(0);
+            lista.add( Integer.toString( questoes ) );
+            int acertos = cursor.getInt(1);
+            lista.add( Integer.toString( acertos ) );
+            Float nota = cursor.getFloat(2);
+            lista.add( Float.toString( nota ) );
+            cursor.close();
+        }
+        db.close();
+        return lista;
+        //return pergunta;
+    }
+
 }
